@@ -2,21 +2,21 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Install system deps + spacy model
+RUN apt-get update && \
+    apt-get install -y gcc python3-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    python -m pip install --upgrade pip
 
-# Copy requirements first to leverage Docker cache
+# Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN python -m spacy download en_core_web_sm
+RUN pip install --no-cache-dir -r requirements.txt && \
+    python -m spacy download en_core_web_sm
 
-# Copy all other files
+# Copy application
 COPY . .
 
-# Expose the port the app runs on
+# Run on port 8000 (required for Hugging Face)
 EXPOSE 8000
 
-# Command to run the application
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

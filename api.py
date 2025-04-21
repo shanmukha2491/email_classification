@@ -9,7 +9,7 @@ app = FastAPI()
 
 # Load the pre-trained machine learning model for email classification
 # This model should be trained and saved as 'email_classification_system.pkl'
-model = joblib.load("email_classification_system.pkl")
+model = joblib.load("models/email_classification_system.pkl")
 
 # Define the structure of the incoming request using Pydantic
 # It expects a JSON with one field: 'email_body'
