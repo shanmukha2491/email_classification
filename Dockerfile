@@ -1,16 +1,23 @@
-# Use official Python image
 FROM python:3.9-slim
 
-# Set working directory
+# Install system dependencies needed for building the package (including build-essential)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    libblas-dev \
+    liblapack-dev \
+    gfortran \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy code into container
+# Copy the current directory contents into the container
 COPY . .
 
-# Install dependencies
-RUN pip install -r requirements.txt
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port
+# Expose the correct port
 EXPOSE 7860
 
 # Run the FastAPI app using Uvicorn
