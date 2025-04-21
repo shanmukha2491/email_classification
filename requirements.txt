@@ -1,6 +1,6 @@
-fastapi
-uvicorn
-scikit-learn
-pandas
-spacy
-regex
+fastapi>=0.68.0
+uvicorn>=0.15.0
+spacy>=3.0.0
+scikit-learn>=0.24.0
+python-multipart
+pydantic>=1.8.0

@@ -1,24 +1,22 @@
 FROM python:3.9-slim
 
-# Install system dependencies needed for building the package (including build-essential)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-dev \
-    libblas-dev \
-    liblapack-dev \
-    gfortran \
-    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
-# Copy the current directory contents into the container
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m spacy download en_core_web_sm
+
+# Copy all other files
 COPY . .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Expose the port the app runs on
+EXPOSE 8000
 
-# Expose the correct port
-EXPOSE 7860
-
-# Run the FastAPI app using Uvicorn
-CMD ["uvicorn", "app.api:app", "--host", "0.0.0.0", "--port", "7860"]
+# Command to run the application
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
